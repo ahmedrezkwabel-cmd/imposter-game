@@ -67,23 +67,28 @@ export default function Page() {
         setPlayerId(params.get("id") || "");
         const isAdminParam = params.get("admin") === ADMIN_KEY;
         setIsAdmin(isAdminParam);
-        useEffect(() => {
-            async function lockHostIfNeeded() {
-                if (!mounted) return;
-                if (view !== "host") return;
-                if (isAdmin) return;
 
-                await claimHostLock();
-            }
 
-            lockHostIfNeeded();
-        }, [mounted, view, isAdmin]);
+
         const saved = loadState();
         if (saved) {
             setAppState(saved);
             setHostPlayerIds(saved.lastSelectedPlayerIds || []);
         }
     }, []);
+
+    useEffect(() => {
+        async function lockHostIfNeeded() {
+            if (!mounted) return;
+            if (view !== "host") return;
+            if (isAdmin) return;
+
+            await claimHostLock();
+        }
+
+        lockHostIfNeeded();
+    }, [mounted, view, isAdmin]);
+
 
     useEffect(() => {
         if (!mounted) return;
