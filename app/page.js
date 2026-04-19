@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "imposter_webapp_v1";
 const ADMIN_KEY = "1907";
+const DEVICE_KEY = "imposter_device_id";
 function uid(len = 8) {
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
     let out = "";
@@ -59,6 +60,8 @@ export default function Page() {
     const [remoteGame, setRemoteGame] = useState(null);
     const [hostLocked, setHostLocked] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [deviceId, setDeviceId] = useState("");
+    const [hostOwnerId, setHostOwnerId] = useState("");
     useEffect(() => {
         setMounted(true);
 
@@ -67,7 +70,14 @@ export default function Page() {
         setPlayerId(params.get("id") || "");
         const isAdminParam = params.get("admin") === ADMIN_KEY;
         setIsAdmin(isAdminParam);
+        let savedDeviceId = localStorage.getItem(DEVICE_KEY);
 
+        if (!savedDeviceId) {
+            savedDeviceId = uid(12);
+            localStorage.setItem(DEVICE_KEY, savedDeviceId);
+        }
+
+        setDeviceId(savedDeviceId);
 
 
         const saved = loadState();
@@ -127,8 +137,10 @@ export default function Page() {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setHostLocked(!!data.locked);
+                    setHostOwnerId(data.ownerId || "");
                 } else {
                     setHostLocked(false);
+                    setHostOwnerId("");
                 }
             } catch (error) {
                 console.error("Error loading host lock:", error);
@@ -221,15 +233,18 @@ export default function Page() {
             const lockSnap = await getDoc(lockRef);
 
             if (!lockSnap.exists()) {
-                await setDoc(lockRef, { locked: true });
+                await setDoc(lockRef, { locked: true, ownerId: deviceId });
                 setHostLocked(true);
+                setHostOwnerId(deviceId);
                 return true;
             }
 
             const lockData = lockSnap.data();
-            if (!lockData.locked) {
-                await setDoc(lockRef, { locked: true });
+
+            if (!lockData.locked || lockData.ownerId === deviceId) {
+                await setDoc(lockRef, { locked: true, ownerId: deviceId });
                 setHostLocked(true);
+                setHostOwnerId(deviceId);
                 return true;
             }
 
@@ -239,7 +254,6 @@ export default function Page() {
             return false;
         }
     }
-
 
     async function removePlayer(id) {
         const nextPlayers = appState.players.filter((p) => p.id !== id);
@@ -340,7 +354,7 @@ export default function Page() {
         return null;
     }
 
-    if (view === "host" && hostLocked && !isAdmin) {
+    if (view === "host" && hostLocked && hostOwnerId !== deviceId && !isAdmin) {
         return (
             <main style={styles.page}>
                 <div style={styles.containerSmall}>
