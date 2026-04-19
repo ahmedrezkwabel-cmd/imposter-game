@@ -1,11 +1,11 @@
 "use client";
 
 import { db } from "./firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "imposter_webapp_v1";
-
+const ADMIN_KEY = "1907";
 function uid(len = 8) {
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
     let out = "";
@@ -57,14 +57,27 @@ export default function Page() {
     const [place, setPlace] = useState("");
     const [showReusePrompt, setShowReusePrompt] = useState(false);
     const [remoteGame, setRemoteGame] = useState(null);
-
+    const [hostLocked, setHostLocked] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     useEffect(() => {
         setMounted(true);
 
         const params = new URLSearchParams(window.location.search);
         setView(params.get("view") || "home");
         setPlayerId(params.get("id") || "");
+        const isAdminParam = params.get("admin") === ADMIN_KEY;
+        setIsAdmin(isAdminParam);
+        useEffect(() => {
+            async function lockHostIfNeeded() {
+                if (!mounted) return;
+                if (view !== "host") return;
+                if (isAdmin) return;
 
+                await claimHostLock();
+            }
+
+            lockHostIfNeeded();
+        }, [mounted, view, isAdmin]);
         const saved = loadState();
         if (saved) {
             setAppState(saved);
@@ -99,6 +112,31 @@ export default function Page() {
         const interval = setInterval(loadGame, 2000);
         return () => clearInterval(interval);
     }, [mounted]);
+
+    useEffect(() => {
+        async function loadHostLock() {
+            try {
+                const docRef = doc(db, "host", "lock");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    setHostLocked(!!data.locked);
+                } else {
+                    setHostLocked(false);
+                }
+            } catch (error) {
+                console.error("Error loading host lock:", error);
+            }
+        }
+
+        if (!mounted) return;
+
+        loadHostLock();
+        const interval = setInterval(loadHostLock, 2000);
+        return () => clearInterval(interval);
+    }, [mounted]);
+
 
 
     useEffect(() => {
@@ -172,6 +210,32 @@ export default function Page() {
         setNewPlayerName("");
     }
 
+    async function claimHostLock() {
+        try {
+            const lockRef = doc(db, "host", "lock");
+            const lockSnap = await getDoc(lockRef);
+
+            if (!lockSnap.exists()) {
+                await setDoc(lockRef, { locked: true });
+                setHostLocked(true);
+                return true;
+            }
+
+            const lockData = lockSnap.data();
+            if (!lockData.locked) {
+                await setDoc(lockRef, { locked: true });
+                setHostLocked(true);
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.error("Error claiming host lock:", error);
+            return false;
+        }
+    }
+
+
     async function removePlayer(id) {
         const nextPlayers = appState.players.filter((p) => p.id !== id);
 
@@ -229,14 +293,16 @@ export default function Page() {
 
         try {
             await setDoc(doc(db, "game", "current"), endedGame);
+            await deleteDoc(doc(db, "host", "lock"));
+
             setRemoteGame(endedGame);
+            setHostLocked(false);
             setPlace("");
             setHostImposterIds([]);
         } catch (error) {
             console.error("Error ending game:", error);
         }
     }
-
     function useSamePlayers() {
         setHostPlayerIds(appState.lastSelectedPlayerIds);
         setHostImposterIds([]);
@@ -268,6 +334,20 @@ export default function Page() {
     if (!mounted) {
         return null;
     }
+
+    if (view === "host" && hostLocked && !isAdmin) {
+        return (
+            <main style={styles.page}>
+                <div style={styles.containerSmall}>
+                    <div style={styles.card}>
+                        <h2>Host is locked</h2>
+                    </div>
+                </div>
+            </main>
+        );
+    }
+
+
 
     if (view === "host") {
         return (
