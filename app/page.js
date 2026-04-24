@@ -88,17 +88,6 @@ export default function Page() {
         }
     }, []);
 
-    useEffect(() => {
-        async function lockHostIfNeeded() {
-            if (!mounted) return;
-            if (view !== "host") return;
-            if (isAdmin) return;
-
-            await claimHostLock();
-        }
-
-        lockHostIfNeeded();
-    }, [mounted, view, isAdmin]);
 
 
     useEffect(() => {
@@ -305,7 +294,13 @@ export default function Page() {
         ) {
             return;
         }
-
+        if (!isAdmin) {
+            const locked = await claimHostLock();
+            if (!locked) {
+                alert("Host is locked by another device");
+                return;
+            }
+        }
         const gameData = {
             place: place.trim(),
             selectedPlayerIds: hostPlayerIds,
