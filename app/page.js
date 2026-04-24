@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "imposter_webapp_v1";
 const ADMIN_KEY = "1907";
+const HOST_LOCK_DURATION = 80 * 1000;
 const DEVICE_KEY = "imposter_device_id";
 function uid(len = 8) {
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -136,6 +137,15 @@ export default function Page() {
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
+                    const now = Date.now();
+
+                    if (data.expiresAt && now > data.expiresAt) {
+                        await deleteDoc(docRef);
+                        setHostLocked(false);
+                        setHostOwnerId("");
+                        return;
+                    }
+
                     setHostLocked(!!data.locked);
                     setHostOwnerId(data.ownerId || "");
                 } else {
@@ -231,9 +241,16 @@ export default function Page() {
         try {
             const lockRef = doc(db, "host", "lock");
             const lockSnap = await getDoc(lockRef);
+            const now = Date.now();
+            const expiresAt = now + HOST_LOCK_DURATION;
 
             if (!lockSnap.exists()) {
-                await setDoc(lockRef, { locked: true, ownerId: deviceId });
+                await setDoc(lockRef, {
+                    locked: true,
+                    ownerId: deviceId,
+                    expiresAt,
+                });
+
                 setHostLocked(true);
                 setHostOwnerId(deviceId);
                 return true;
@@ -241,8 +258,17 @@ export default function Page() {
 
             const lockData = lockSnap.data();
 
-            if (!lockData.locked || lockData.ownerId === deviceId) {
-                await setDoc(lockRef, { locked: true, ownerId: deviceId });
+            if (
+                !lockData.locked ||
+                lockData.ownerId === deviceId ||
+                (lockData.expiresAt && now > lockData.expiresAt)
+            ) {
+                await setDoc(lockRef, {
+                    locked: true,
+                    ownerId: deviceId,
+                    expiresAt,
+                });
+
                 setHostLocked(true);
                 setHostOwnerId(deviceId);
                 return true;
@@ -254,7 +280,6 @@ export default function Page() {
             return false;
         }
     }
-
     async function removePlayer(id) {
         const nextPlayers = appState.players.filter((p) => p.id !== id);
 
