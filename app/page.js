@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "imposter_webapp_v1";
 const ADMIN_KEY = "1907";
-const HOST_LOCK_DURATION = 80 * 1000;
+const HOST_LOCK_DURATION = 20 * 1000;
 const DEVICE_KEY = "imposter_device_id";
 function uid(len = 8) {
     const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
