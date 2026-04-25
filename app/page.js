@@ -524,9 +524,15 @@ export default function Page() {
 
         // اختيار imposters
         const shuffled = [...hostPlayerIds].sort(() => Math.random() - 0.5);
-        const imposterCount = 1; // ممكن بعدين تخليها اختيار
-        const imposterIds = shuffled.slice(0, imposterCount);
+        let maxImposters = Math.floor(hostPlayerIds.length / 2);
 
+        if (hostPlayerIds.length <= 4) {
+            maxImposters = 1;
+        }
+
+        const imposterCount =
+            Math.floor(Math.random() * maxImposters) + 1;
+        const imposterIds = shuffled.slice(0, imposterCount);
         // اختيار مكان أو لاعب
         let selectedItem = "";
 
