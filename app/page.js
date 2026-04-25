@@ -46,7 +46,202 @@ function defaultState() {
         lastSelectedPlayerIds: [],
     };
 }
-
+const places = places = [
+    "مسجد",
+    "كنيسة",
+    "معبد",
+    "قهوة",
+    "مطعم",
+    "شاطئ",
+    "كورنيش",
+    "نادي",
+    "جيم",
+    "مول",
+    "سوق شعبي",
+    "سوبر ماركت",
+    "سينما",
+    "مسرح",
+    "مكتبة",
+    "مدرسة",
+    "جامعة",
+    "حضانة",
+    "مستشفى",
+    "عيادة",
+    "صيدلية",
+    "مركز أشعة",
+    "بنك",
+    "مكتب بريد",
+    "شركة",
+    "مصنع",
+    "ورشة",
+    "محطة بنزين",
+    "مغسلة سيارات",
+    "موقف ميكروباص",
+    "محطة أتوبيس",
+    "محطة مترو",
+    "محطة قطار",
+    "مطار",
+    "فندق",
+    "شقة مفروشة",
+    "حديقة عامة",
+    "حديقة حيوان",
+    "ملاهي",
+    "مدينة ألعاب",
+    "نادي ليلي",
+    "كباريه",
+    "بار",
+    "صالة بلياردو",
+    "صالة بولينج",
+    "ملعب كرة",
+    "ملعب تنس",
+    "ملعب سكواش",
+    "مركز تدريب",
+    "قاعة مؤتمرات",
+    "قاعة أفراح",
+    "قاعة محاضرات",
+    "معرض",
+    "معرض سيارات",
+    "معرض أثاث",
+    "محل ملابس",
+    "محل أحذية",
+    "محل موبايلات",
+    "محل إلكترونيات",
+    "محل أدوات منزلية",
+    "محل بقالة",
+    "محل جزارة",
+    "محل فراخ",
+    "محل سمك",
+    "محل حلويات",
+    "مخبز",
+    "كشك",
+    "مكتبة أدوات مكتبية",
+    "محل هدايا",
+    "محل زهور",
+    "صالون حلاقة",
+    "مركز تجميل",
+    "سبا",
+    "ساونا",
+    "حمام سباحة",
+    "مركز غوص",
+    "مرسى",
+    "يخت",
+    "جراج",
+    "مخزن",
+    "مستودع",
+    "موقع بناء",
+    "برج سكني",
+    "فيلا",
+    "بيت ريفي",
+    "مزرعة",
+    "مزرعة دواجن",
+    "مزرعة أسماك",
+    "مكتب تأجير سيارات",
+    "قسم شرطة",
+    "محكمة",
+    "سجن",
+    "متحف",
+    "مكتبة عامة",
+    "دار أيتام",
+    "دار مسنين",
+    "مركز شباب",
+    "سايبرر",
+    "استاد",
+    "جري سباق"
+];
+const famousPlayers = [
+    "ليونيل ميسي",
+    "كريستيانو رونالدو",
+    "نيمار",
+    "كيليان مبابي",
+    "محمد صلاح",
+    "كريم بنزيما",
+    "حسام حسن",
+    "كيفن دي بروين",
+    "إيرلينج هالاند",
+    "لوكا مودريتش",
+    "توني كروس",
+    "سيرجيو راموس",
+    "فيرجيل فان دايك",
+    "أليسون بيكر",
+    "تيبو كورتوا",
+    "مانويل نوير",
+    "جيانلويجي دوناروما",
+    "رياض محرز",
+    "سون هيونج مين",
+    "هاري كين",
+    "أنطوان جريزمان",
+    "محمد أبو تريكة",
+    "عصام الحضري",
+    "أحمد حسن",
+    "وائل جمعة",
+    "إيدين هازارد",
+    "حازم إمام",
+    "ماركوس راشفورد",
+    "برونو فيرنانديز",
+    "هاني رمزي",
+    "برناردو سيلفا",
+    "رحيم ستيرلينج",
+    "فيل فودين",
+    "بوكايو ساكا",
+    "مارتن أوديجارد",
+    "غابرييل جيسوس",
+    "قفشة",
+    "داروين نونيز",
+    "محمد بركات",
+    "دييغو جوتا",
+    "ألكسندر أرنولد",
+    "أندرو روبرتسون",
+    "جواو كانسيلو",
+    "إمام عاشور",
+    "زيزو",
+    "جود بيلينغهام",
+    "فينيسيوس جونيور",
+    "أحمد فتحي",
+    "فيدي فالفيردي",
+    "عماد متعب",
+    "أنخيل دي ماريا",
+    "ناصر منسي",
+    "محمد هاني",
+    "روميلو لوكاكو",
+    "محمد الشناوي",
+    "رمضان صبحي",
+    "وسام أبو علي",
+    "تريزيجيه",
+    "محمود الخطيب",
+    "بن شرقي",
+    "عبد الله السعيد",
+    "طارق حامد",
+    "شيكابالا",
+    "أحمد المحمدي",
+    "فلافيوو",
+    "كاكا",
+    "عمرو زكي",
+    "محمد النني",
+    "زيزو الزمالك",
+    "تشافي",
+    "إنييستا",
+    "تشابي ألونسو",
+    "ديفيد سيلفا",
+    "واين روني",
+    "فرانك لامبارد",
+    "ستيفن جيرارد",
+    "ديدييه دروجبا",
+    "صامويل إيتو",
+    "رونالدينيو",
+    "زين الدين زيدان",
+    "تييري هنري",
+    "أحمد شوبير",
+    "رود فان نيستلروي",
+    "روبيرتو كارلوس",
+    "كافو",
+    "باولو مالديني",
+    "دييغو مارادونا",
+    "رونالدو الظاهرة",
+    "حسني عبد ربه",
+    "لويس فيغو",
+    "مجدي عبد الغني",
+    "جيلبرتو"
+]
 export default function Page() {
     const [mounted, setMounted] = useState(false);
     const [view, setView] = useState("home");
@@ -57,6 +252,7 @@ export default function Page() {
     const [hostPlayerIds, setHostPlayerIds] = useState([]);
     const [hostImposterIds, setHostImposterIds] = useState([]);
     const [place, setPlace] = useState("");
+    const [category, setCategory] = useState("places");
     const [showReusePrompt, setShowReusePrompt] = useState(false);
     const [remoteGame, setRemoteGame] = useState(null);
     const [hostLocked, setHostLocked] = useState(false);
@@ -322,6 +518,52 @@ export default function Page() {
         }
     }
 
+
+    async function shuffleGame() {
+        if (hostPlayerIds.length === 0) return;
+
+        // اختيار imposters
+        const shuffled = [...hostPlayerIds].sort(() => Math.random() - 0.5);
+        const imposterCount = 1; // ممكن بعدين تخليها اختيار
+        const imposterIds = shuffled.slice(0, imposterCount);
+
+        // اختيار مكان أو لاعب
+        let selectedItem = "";
+
+        if (category === "places") {
+            selectedItem = places[Math.floor(Math.random() * places.length)];
+        } else {
+            selectedItem = famousPlayers[Math.floor(Math.random() * famousPlayers.length)];
+        }
+
+        // اختيار مين يبدأ
+        const starter =
+            hostPlayerIds[Math.floor(Math.random() * hostPlayerIds.length)];
+
+        const gameData = {
+            place: selectedItem,
+            selectedPlayerIds: hostPlayerIds,
+            imposterIds: imposterIds,
+            active: true,
+            starterId: starter,
+            mode: "shuffle"
+        };
+
+        try {
+            await setDoc(doc(db, "game", "current"), gameData);
+
+            // اقفل الهوست هنا
+            if (!isAdmin) {
+                await claimHostLock();
+            }
+
+            setRemoteGame(gameData);
+        } catch (error) {
+            console.error("Error shuffle game:", error);
+        }
+    }
+
+
     async function endGame() {
         const endedGame = {
             place: "",
@@ -443,6 +685,18 @@ export default function Page() {
                         </div>
 
                         <div style={styles.section}>
+                            <div style={styles.section}>
+                                <h3>Category</h3>
+                                <select
+                                    style={styles.input}
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                >
+                                    <option value="places">أماكن</option>
+                                    <option value="players">لاعيبة</option>
+                                </select>
+                            </div>
+
                             <h3>Place</h3>
                             <input
                                 style={styles.input}
@@ -499,6 +753,12 @@ export default function Page() {
                             >
                                 Start Game
                             </button>
+                            <button
+                                style={styles.button}
+                                onClick={shuffleGame}
+                            >
+                                Shuffle Game
+                            </button>
                             <button style={styles.buttonOutline} onClick={endGame}>
                                 End Game
                             </button>
@@ -510,11 +770,21 @@ export default function Page() {
                                 <strong>{remoteGame?.active ? "Active" : "No active game"}</strong>
                             </p>
 
-                            {remoteGame?.active && (
+                            {/* Shuffle mode (hide data from host) */}
+                            {remoteGame?.active && remoteGame?.mode === "shuffle" && (
+                                <div>
+                                    <p>Game started</p>
+                                    <p>Check your player link</p>
+                                </div>
+                            )}
+
+                            {/* Manual mode (show full data) */}
+                            {remoteGame?.active && remoteGame?.mode !== "shuffle" && (
                                 <>
                                     <p>
                                         Place: <strong>{remoteGame?.place}</strong>
                                     </p>
+
                                     <p>
                                         Players:{" "}
                                         {appState.players
@@ -550,6 +820,14 @@ export default function Page() {
                         {currentPlayer && (
                             <>
                                 <h2>{currentPlayer.name}</h2>
+
+                                {remoteGame?.active && remoteGame?.starterId && (
+                                    <div style={styles.smallLabel}>
+                                        {
+                                            appState.players.find(p => p.id === remoteGame.starterId)?.name
+                                        } starts
+                                    </div>
+                                )}
 
                                 {!remoteGame?.active && (
                                     <div style={styles.roleBox}>No active game</div>
