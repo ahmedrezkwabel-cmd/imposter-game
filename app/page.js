@@ -777,7 +777,7 @@ export default function Page() {
                             </p>
 
                             {/* Shuffle mode (hide data from host) */}
-                            {remoteGame?.active && remoteGame?.mode === "shuffle" && (
+                            {remoteGame?.active && remoteGame?.mode === "shuffle" && !isAdmin && (
                                 <div>
                                     <p>Game started</p>
                                     <p>Check your player link</p>
@@ -785,7 +785,7 @@ export default function Page() {
                             )}
 
                             {/* Manual mode (show full data) */}
-                            {remoteGame?.active && remoteGame?.mode !== "shuffle" && (
+                            {remoteGame?.active && (remoteGame?.mode !== "shuffle" || isAdmin) && (
                                 <>
                                     <p>
                                         Place: <strong>{remoteGame?.place}</strong>
