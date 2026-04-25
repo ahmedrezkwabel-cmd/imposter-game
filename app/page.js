@@ -46,7 +46,7 @@ function defaultState() {
         lastSelectedPlayerIds: [],
     };
 }
-const places = places = [
+const places = [
     "مسجد",
     "كنيسة",
     "معبد",
